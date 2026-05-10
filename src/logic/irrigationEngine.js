@@ -82,30 +82,30 @@ export const calculateIrrigation = ({
   if (moisturePercent <= adjustedThresholds.critical) {
     status = 'critico';
     priority = 'alta';
-    recommendation = `Riego urgente requerido. El nivel de humedad (${moisturePercent}%) está por debajo del límite crítico para el ${spec.name}.`;
+    recommendation = `Riego urgente. La tierra está muy seca y tus plantas necesitan agua pronto.`;
     liters = spec.litersPerPlant * 1.5 * waterFactor;
   } else if (moisturePercent < adjustedThresholds.optimal) {
     status = 'sediento';
     priority = 'media';
-    recommendation = `Se recomienda aplicar riego moderado para estabilizar el cultivo.`;
+    recommendation = `Se recomienda un riego moderado para mantener la buena humedad del lote.`;
     liters = spec.litersPerPlant * waterFactor;
   } else if (moisturePercent >= adjustedThresholds.saturation) {
     status = 'saturado';
     priority = 'ninguna';
-    recommendation = `Suelo saturado. Suspender riego inmediatamente para evitar pudrición de raíces en el ${spec.name}.`;
+    recommendation = `Suelo muy húmedo. Suspender el riego para evitar que las raíces se dañen.`;
     liters = 0;
     frequency = 'Suspender';
   } else {
     status = 'saludable';
     priority = 'ninguna';
-    recommendation = `El nivel de humedad es óptimo. Mantener el monitoreo regular.`;
+    recommendation = `La humedad es adecuada por ahora. Sigue monitoreando con regularidad.`;
     liters = 0;
   }
 
   // Ajuste por Lluvia Reciente
   if (recentRain === 'mucha' && status !== 'saturado') {
     status = 'saludable';
-    recommendation = `La lluvia reciente ha cubierto las necesidades. No es necesario regar hoy.`;
+    recommendation = `La lluvia reciente fue suficiente. No es necesario regar hoy.`;
     liters = 0;
   } else if (recentRain === 'poca' && liters > 0) {
     liters = liters * 0.5;

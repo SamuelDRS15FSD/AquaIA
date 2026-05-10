@@ -10,11 +10,11 @@
 
 export default function StatusBadge({ status }) {
   const configs = {
-    saludable: { label: 'Saludable', color: 'var(--color-status-saludable)', icon: '✅' },
-    sediento:  { label: 'Sediento',  color: 'var(--color-status-sediento)',  icon: '⚠️' },
-    critico:   { label: 'Crítico',   color: 'var(--color-status-critico)',   icon: '🚨' },
-    saturado:  { label: 'Saturado',  color: 'var(--color-status-saturado)',  icon: '💧' },
-    monitoreo: { label: 'Revisar',   color: 'var(--color-status-monitoreo)', icon: '🔍' },
+    saludable: { label: 'Va muy bien', color: 'var(--color-status-saludable)', icon: '✅' },
+    sediento:  { label: 'Tiene sed',  color: 'var(--color-status-sediento)',  icon: '⚠️' },
+    critico:   { label: 'Urgente',    color: 'var(--color-status-critico)',   icon: '🚨' },
+    saturado:  { label: 'Mucha agua', color: 'var(--color-status-saturado)',  icon: '💧' },
+    monitoreo: { label: 'Revisar',    color: 'var(--color-status-monitoreo)', icon: '🔍' },
   };
 
   const config = configs[status] || configs.monitoreo;

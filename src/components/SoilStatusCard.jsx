@@ -2,11 +2,11 @@ export default function SoilStatusCard({ moisture, status }) {
   // Mapeo de estados visuales con semántica de color de alto impacto
   const configs = {
     saludable: {
-      label: 'Saludable',
+      label: 'Va muy bien',
       color: '#10b981', // Emerald-500
       bgColor: '#ecfdf5',
       barColor: '#10b981',
-      description: 'Estado Óptimo',
+      description: 'El cultivo va bien',
       plantScale: 1.1,
       leafAngle: 0,
     },
@@ -15,30 +15,30 @@ export default function SoilStatusCard({ moisture, status }) {
       color: '#f97316', // Orange-500
       bgColor: '#fff7ed',
       barColor: '#f97316',
-      description: 'Necesita Riego',
+      description: 'La tierra está seca',
       plantScale: 0.9,
       leafAngle: 25,
     },
     critico: {
-      label: 'Crítico',
+      label: 'Urgente',
       color: '#ef4444', // Red-500
       bgColor: '#fef2f2',
       barColor: '#ef4444',
-      description: 'Estrés Hídrico',
+      description: 'Tiene mucha sed',
       plantScale: 0.8,
       leafAngle: 45,
     },
     saturado: {
-      label: 'Saturado',
+      label: 'Mucha agua',
       color: '#3b82f6', // Blue-500
       bgColor: '#eff6ff',
       barColor: '#3b82f6',
-      description: 'Exceso de Agua',
+      description: 'Demasiada agua',
       plantScale: 1,
       leafAngle: 10,
     },
     monitoreo: {
-      label: 'Monitoreo',
+      label: 'Revisar',
       color: '#8b5cf6', // Violet-500 for neutral/review
       bgColor: '#f5f3ff',
       barColor: '#eab308', // Yellow for "needs review" in bar
