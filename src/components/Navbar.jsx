@@ -16,6 +16,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth }              from '../hooks/useAuth';
 import { logout }               from '../services/authService';
 import OfflineIndicator       from './OfflineIndicator';
+import Logo                    from './Logo';
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -56,7 +57,7 @@ export default function Navbar() {
         {/* Brand + Status */}
         <div className="aquaia-navbar__brand-group" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <NavLink to="/" className="aquaia-navbar__brand" onClick={closeMenu}>
-            <span className="aquaia-navbar__logo">💧</span>
+            <Logo size={28} />
             <span className="aquaia-navbar__title">AquaIA</span>
           </NavLink>
           <OfflineIndicator />
