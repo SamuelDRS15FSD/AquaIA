@@ -64,45 +64,67 @@ export function CropProvider({ children }) {
     saveClimateModeToLocal(climateMode);
   }, [climateMode]);
 
-  // Función para registrar monitoreo (Motor Real Fase 3 + Persistencia)
-  const updateCropStatus = (cropId, { moisture, weather, rain }) => {
-    setCrops(prevCrops => prevCrops.map(crop => {
-      if (crop.id !== cropId) return crop;
+  // Función para registrar monitoreo (Motor Real Fase 5 — Híbrido IA + Reglas)
+  const updateCropStatus = async (cropId, { moisture, weather, rain }) => {
+    // 1. Encontrar el cultivo actual
+    const currentCrop = crops.find(c => c.id === cropId);
+    if (!currentCrop) return;
 
-      // Mapeo de niveles visuales a porcentaje numérico
-      const moistureMap = {
-        'seca': 15,
-        'baja': 35,
-        'media': 55,
-        'adecuada': 75,
-        'saturada': 95
-      };
+    // 2. Mapeo de niveles visuales a porcentaje numérico
+    const moistureMap = {
+      'seca': 15,
+      'baja': 35,
+      'media': 55,
+      'adecuada': 75,
+      'saturada': 95
+    };
+    const moisturePercent = moistureMap[moisture] || 50;
 
-      const moisturePercent = moistureMap[moisture] || 50;
+    // 3. Ejecutar el motor determinístico (Base Confiable)
+    const analysis = calculateIrrigation({
+      cropType: currentCrop.type,
+      moisturePercent,
+      climateMode,
+      recentRain: rain
+    });
 
-      // Ejecutar el motor de riego
-      const analysis = calculateIrrigation({
-        cropType: crop.type,
-        moisturePercent,
-        climateMode,
-        recentRain: rain
+    // 4. Generar consejo de IA en segundo plano (Fase 5)
+    const fallbackInsight = getHumanizedExplanation(analysis);
+    
+    // Primero actualizamos con los datos determinísticos
+    const updatedData = {
+      ...currentCrop,
+      moisturePercent: analysis.moisturePercent,
+      status: analysis.status,
+      lastCheck: new Date().toLocaleString(),
+      recommendation: analysis.recommendation,
+      aiExplanation: 'Analizando con IA...', // Placeholder visual
+      liters: analysis.liters,
+      frequency: analysis.frequency,
+      priority: analysis.priority
+    };
+
+    setCrops(prev => prev.map(c => c.id === cropId ? updatedData : c));
+
+    // Llamada asíncrona a Gemini
+    try {
+      const { generateCropInsight } = await import('../services/aiService');
+      const aiInsight = await generateCropInsight({
+        name: currentCrop.name,
+        ...analysis,
+        recentRain: rain,
+        climateMode
       });
 
-      // Generar explicación humanizada (Offline)
-      const humanized = getHumanizedExplanation(analysis);
-
-      return {
-        ...crop,
-        moisturePercent: analysis.moisturePercent,
-        status: analysis.status,
-        lastCheck: new Date().toLocaleString(), // Timestamp real
-        recommendation: analysis.recommendation,
-        aiExplanation: humanized,
-        liters: analysis.liters,
-        frequency: analysis.frequency,
-        priority: analysis.priority
-      };
-    }));
+      setCrops(prev => prev.map(c => 
+        c.id === cropId ? { ...c, aiExplanation: aiInsight } : c
+      ));
+    } catch (error) {
+      console.error('Error generando insight:', error);
+      setCrops(prev => prev.map(c => 
+        c.id === cropId ? { ...c, aiExplanation: fallbackInsight } : c
+      ));
+    }
   };
 
   // Función para añadir nuevo cultivo

@@ -53,9 +53,14 @@ export default function RecommendationCard({
         <hr className="recommendation-card__divider" />
 
         <div className="recommendation-card__ai-section">
-          <div className="recommendation-card__ai-badge">Asistente Offline</div>
-          <p className="recommendation-card__ai-text">
-            "{aiExplanation || 'Esperando el primer monitoreo...'}"
+          <div className="recommendation-card__ai-header">
+            <span className="recommendation-card__ai-badge">
+              {aiExplanation?.includes('Analizando') ? 'Procesando...' : 'Consejo de IA'}
+            </span>
+            <div className="ai-sparkle">✨</div>
+          </div>
+          <p className={`recommendation-card__ai-text ${aiExplanation?.includes('Analizando') ? 'analyzing' : ''}`}>
+            {aiExplanation || 'Esperando el primer monitoreo...'}
           </p>
         </div>
       </div>
@@ -63,93 +68,117 @@ export default function RecommendationCard({
       <style>{`
         .recommendation-card {
           background: white;
-          border-radius: 1rem;
+          border-radius: 1.5rem;
           overflow: hidden;
           border: 1px solid var(--color-border);
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
         .recommendation-card__header {
-          padding: 0.5rem 1rem;
-          text-align: center;
+          padding: 0.5rem 1.25rem;
+          text-align: left;
         }
         .recommendation-card__priority-label {
-          font-size: 0.75rem;
-          font-weight: 700;
+          font-size: 0.65rem;
+          font-weight: 800;
           text-transform: uppercase;
           color: var(--color-text);
+          letter-spacing: 0.05em;
         }
         .recommendation-card__body {
-          padding: 1.5rem;
+          padding: 1.25rem;
         }
         .recommendation-card__title {
-          font-size: 1.1rem;
-          margin-bottom: 0.5rem;
+          font-size: 1rem;
+          font-weight: 700;
+          margin-bottom: 0.4rem;
+          color: var(--color-text);
         }
         .recommendation-card__text {
-          font-size: 1rem;
+          font-size: 0.9rem;
           color: var(--color-text);
-          font-weight: 500;
-          margin-bottom: 1.5rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          line-height: 1.4;
         }
         .recommendation-card__metrics {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
+          gap: 0.75rem;
+          margin-bottom: 1rem;
         }
         .metric-item {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          background: #f8fafc; /* slate-50 */
-          padding: 0.75rem;
+          gap: 0.6rem;
+          background: #f8fafc;
+          padding: 0.6rem;
           border-radius: 0.75rem;
+          border: 1px solid #f1f5f9;
         }
         .metric-item__icon {
-          font-size: 1.5rem;
+          font-size: 1.25rem;
         }
         .metric-item__value {
           display: block;
           font-weight: 800;
-          font-size: 1.1rem;
+          font-size: 1rem;
           color: var(--color-text);
-          line-height: 1.1;
+          line-height: 1;
         }
         .metric-item__label {
           display: block;
-          font-size: 0.7rem;
-          font-weight: 600;
+          font-size: 0.6rem;
+          font-weight: 700;
           color: var(--color-text-muted);
           text-transform: uppercase;
+          margin-top: 0.15rem;
         }
         .recommendation-card__divider {
-          margin: 1.5rem 0;
+          margin: 1rem 0;
           border: 0;
           border-top: 1px dashed var(--color-border);
         }
         .recommendation-card__ai-section {
-          background: var(--color-bg);
-          padding: 1rem;
-          border-radius: 0.75rem;
+          background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+          padding: 0.75rem 1rem;
+          border-radius: 1rem;
           position: relative;
+          border: 1px solid #bae6fd;
+        }
+        .recommendation-card__ai-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.35rem;
         }
         .recommendation-card__ai-badge {
-          position: absolute;
-          top: -0.6rem;
-          left: 1rem;
           background: var(--color-primary);
           color: white;
-          font-size: 0.65rem;
-          font-weight: 700;
-          padding: 0.2rem 0.6rem;
-          border-radius: 0.5rem;
+          font-size: 0.6rem;
+          font-weight: 800;
+          padding: 0.2rem 0.5rem;
+          border-radius: 2rem;
           text-transform: uppercase;
+        }
+        .ai-sparkle {
+          font-size: 0.8rem;
         }
         .recommendation-card__ai-text {
           margin: 0;
-          font-size: 0.95rem;
+          font-size: 0.9rem;
           font-style: italic;
-          color: var(--color-primary-dk);
+          color: #0369a1;
+          line-height: 1.35;
+          font-weight: 500;
+        }
+        .recommendation-card__ai-text.analyzing {
+          animation: aiPulse 1.5s infinite ease-in-out;
+          color: #64748b;
+        }
+        @keyframes aiPulse {
+          0% { opacity: 0.5; }
+          50% { opacity: 1; }
+          100% { opacity: 0.5; }
         }
       `}</style>
     </div>

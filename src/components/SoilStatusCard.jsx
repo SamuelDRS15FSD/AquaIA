@@ -170,13 +170,13 @@ export default function SoilStatusCard({ moisture, status }) {
         .soil-card-premium {
           background: white;
           border-radius: 1.5rem;
-          padding: 2.25rem;
+          padding: 1.5rem;
           display: flex;
           flex-direction: column;
-          gap: 2rem;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+          gap: 1rem;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          min-height: 400px;
+          min-height: 280px;
           position: relative;
           overflow: hidden;
         }
@@ -187,22 +187,22 @@ export default function SoilStatusCard({ moisture, status }) {
           z-index: 2;
         }
         .soil-card__title {
-          font-size: 1.1rem;
+          font-size: 0.95rem;
           font-weight: 700;
           color: var(--color-text);
           margin: 0;
         }
         .soil-card__subtitle {
-          font-size: 0.85rem;
+          font-size: 0.75rem;
           font-weight: 600;
           color: var(--color-text-muted);
           display: block;
-          margin-top: 0.25rem;
+          margin-top: 0.1rem;
         }
         .status-badge-premium {
-          font-size: 0.75rem;
+          font-size: 0.65rem;
           font-weight: 800;
-          padding: 0.4rem 1rem;
+          padding: 0.3rem 0.75rem;
           border-radius: 2rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -213,6 +213,7 @@ export default function SoilStatusCard({ moisture, status }) {
           justify-content: space-between;
           flex: 1;
           position: relative;
+          padding: 0.25rem 0;
         }
         .metrics-hero {
           display: flex;
@@ -220,33 +221,33 @@ export default function SoilStatusCard({ moisture, status }) {
           z-index: 2;
         }
         .percentage-main {
-          font-size: 6rem;
+          font-size: 4.5rem;
           font-weight: 900;
-          line-height: 0.9;
+          line-height: 0.85;
           letter-spacing: -0.05em;
           transition: color 0.4s ease;
         }
         .percentage-main small {
-          font-size: 2rem;
+          font-size: 1.5rem;
           opacity: 0.4;
-          margin-left: 0.2rem;
+          margin-left: 0.1rem;
         }
         .trend-label {
-          font-size: 1rem;
+          font-size: 0.85rem;
           font-weight: 700;
           color: var(--color-text-muted);
-          margin-top: 0.5rem;
+          margin-top: 0.15rem;
           display: block;
         }
         .visual-indicator {
-          width: 200px;
-          height: 220px;
+          width: 170px;
+          height: 180px;
           display: flex;
           align-items: center;
           justify-content: center;
           position: absolute;
-          right: -40px;
-          bottom: -20px;
+          right: -20px;
+          bottom: 5px;
           z-index: 1;
         }
         .plant-wrapper {
@@ -265,28 +266,29 @@ export default function SoilStatusCard({ moisture, status }) {
         .modern-progress {
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 0.4rem;
+          margin-top: 0.25rem;
         }
         .modern-progress__track {
           width: 100%;
-          height: 16px;
+          height: 10px;
           background: #f1f5f9;
-          border-radius: 8px;
+          border-radius: 5px;
           overflow: hidden;
           position: relative;
         }
         .modern-progress__fill {
           height: 100%;
-          border-radius: 8px;
+          border-radius: 5px;
           transition: width 1s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease;
         }
         .modern-progress__labels {
           display: flex;
           justify-content: space-between;
-          font-size: 0.75rem;
+          font-size: 0.6rem;
           font-weight: 700;
           color: var(--color-text-muted);
-          padding: 0 0.25rem;
+          padding: 0 0.15rem;
         }
         .label-target {
           opacity: 0.5;

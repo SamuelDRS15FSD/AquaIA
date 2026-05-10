@@ -8,22 +8,31 @@
  */
 
 export default function WeatherAlert({ mode = 'normal' }) {
-  if (mode === 'normal') return null;
-
   const config = {
+    normal: {
+      label: 'Monitoreo Estacional',
+      desc: 'Clima estable. Momento ideal para realizar podas y mantenimiento preventivo.',
+      color: '#10b981', // emerald-500
+      icon: '🌱',
+    },
     nino: {
       label: 'Fenómeno del Niño',
-      desc: 'Riesgo de sequía. Prioriza el ahorro de agua.',
+      desc: 'Riesgo de sequía. Prioriza el ahorro de agua y el riego nocturno.',
       color: '#fbbf24', // amber-400
       icon: '☀️',
     },
     nina: {
       label: 'Fenómeno de La Niña',
-      desc: 'Riesgo de inundación. Evita el riego excesivo.',
+      desc: 'Riesgo de inundación. Evita el riego excesivo y revisa drenajes.',
       color: '#60a5fa', // blue-400
       icon: '🌧️',
     },
-  }[mode];
+  }[mode] || {
+    label: 'Clima Actual',
+    desc: 'Consulta las recomendaciones específicas para cada lote.',
+    color: '#94a3b8',
+    icon: '☁️'
+  };
 
   return (
     <div className="weather-alert" style={{ borderLeftColor: config.color }}>
