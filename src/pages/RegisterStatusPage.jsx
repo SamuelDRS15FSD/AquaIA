@@ -25,7 +25,7 @@ export default function RegisterStatusPage() {
   const handleSave = () => {
     if (!cropId) return;
     updateCropStatus(cropId, { moisture, weather, rain });
-    navigate('/dashboard');
+    navigate(`/dashboard?id=${cropId}`);
   };
 
   if (!activeCrop) {

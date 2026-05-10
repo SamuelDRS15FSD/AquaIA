@@ -5,17 +5,30 @@
  * En Phase 2, usa datos locales de prueba.
  */
 
-import { useState } from 'react';
-import { Link }     from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams }     from 'react-router-dom';
 import { useCrops } from '../context/CropContext';
 import StatusBadge  from './StatusBadge';
 import WeatherAlert from './WeatherAlert';
 import RecommendationCard from './RecommendationCard';
+import SoilStatusCard from './SoilStatusCard';
 
 export default function Dashboard() {
   const { crops, climateMode } = useCrops();
-  const [activeCropId, setActiveCropId] = useState('1');
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Inicializamos desde el URL si existe, si no, primer cultivo
+  const initialId = searchParams.get('id') || (crops.length > 0 ? crops[0].id : '1');
+  const [activeCropId, setActiveCropId] = useState(initialId);
+  
   const activeCrop = crops.find(c => c.id === activeCropId);
+
+  // Sincronizar URL con la selección activa
+  useEffect(() => {
+    if (activeCropId) {
+      setSearchParams({ id: activeCropId }, { replace: true });
+    }
+  }, [activeCropId, setSearchParams]);
 
   return (
     <div className="dashboard">
@@ -77,22 +90,10 @@ export default function Dashboard() {
                   frequency={activeCrop.frequency}
                 />
 
-                <div className="card sensor-card">
-                  <h3 className="sensor-card__title">Estado del Suelo</h3>
-                  <div className="sensor-card__value">
-                    <span className="sensor-card__number">{activeCrop.moisturePercent}%</span>
-                    <span className="sensor-card__label">Humedad</span>
-                  </div>
-                  <div className="sensor-card__visual-bar">
-                    <div 
-                      className="bar-fill" 
-                      style={{ 
-                        width: `${activeCrop.moisturePercent}%`, 
-                        backgroundColor: activeCrop.status === 'saludable' ? 'var(--color-status-saludable)' : 'var(--color-status-sediento)' 
-                      }}
-                    ></div>
-                  </div>
-                </div>
+                <SoilStatusCard 
+                  moisture={activeCrop.moisturePercent} 
+                  status={activeCrop.status}
+                />
               </div>
             </>
           ) : (
@@ -227,51 +228,6 @@ export default function Dashboard() {
           .dashboard__cards {
             grid-template-columns: 1.6fr 1fr;
           }
-        }
-        .sensor-card {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 2rem;
-          min-height: 250px;
-        }
-        .sensor-card__title {
-          font-size: 1.1rem;
-          margin-bottom: 1.5rem;
-          color: var(--color-text-muted);
-          font-weight: 600;
-        }
-        .sensor-card__value {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .sensor-card__number {
-          font-size: 4rem;
-          font-weight: 900;
-          color: var(--color-text);
-          line-height: 1;
-        }
-        .sensor-card__label {
-          display: block;
-          font-size: 1rem;
-          font-weight: 700;
-          color: var(--color-text-muted);
-          text-transform: uppercase;
-          margin-top: 0.5rem;
-        }
-        .sensor-card__visual-bar {
-          width: 100%;
-          height: 10px;
-          background: var(--color-border);
-          border-radius: 5px;
-          margin-top: 2.5rem;
-          overflow: hidden;
-        }
-        .bar-fill {
-          height: 100%;
-          transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
       `}</style>
     </div>
