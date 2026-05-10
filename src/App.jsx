@@ -21,6 +21,8 @@ import Home            from './pages/Home';
 import Login           from './pages/Login';
 import Register        from './pages/Register';
 import DashboardPage   from './pages/DashboardPage';
+import AddCropPage     from './pages/AddCropPage';
+import RegisterStatusPage from './pages/RegisterStatusPage';
 
 export default function App() {
   return (
@@ -35,7 +37,9 @@ export default function App() {
 
         {/* Rutas protegidas */}
         <Route element={<ProtectedRoute />}>
-          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="dashboard"       element={<DashboardPage />} />
+          <Route path="add-crop"        element={<AddCropPage />} />
+          <Route path="register-status" element={<RegisterStatusPage />} />
         </Route>
 
         {/* Fallback — ruta no encontrada */}

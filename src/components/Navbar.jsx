@@ -11,6 +11,7 @@
  * Phase 2: menú hamburguesa móvil
  */
 
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth }              from '../hooks/useAuth';
 import { logout }               from '../services/authService';
@@ -18,28 +19,32 @@ import { logout }               from '../services/authService';
 export default function Navbar() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
   async function handleLogout() {
     try {
       await logout();
       navigate('/login', { replace: true });
     } catch {
-      // Error silencioso — no bloquear UX si el logout falla
+      // Error silencioso
     }
   }
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const closeMenu = () => setIsOpen(false);
 
   return (
     <header className="aquaia-navbar">
       <div className="aquaia-navbar__inner">
 
         {/* Brand */}
-        <NavLink to="/" className="aquaia-navbar__brand">
+        <NavLink to="/" className="aquaia-navbar__brand" onClick={closeMenu}>
           <span className="aquaia-navbar__logo">💧</span>
           <span className="aquaia-navbar__title">AquaIA</span>
         </NavLink>
 
-        {/* Navigation */}
-        <nav className="aquaia-navbar__nav" aria-label="Navegación principal">
+        {/* Desktop Navigation */}
+        <nav className="aquaia-navbar__nav desktop-only" aria-label="Navegación principal">
           <NavLink
             to="/"
             end
@@ -61,7 +66,6 @@ export default function Navbar() {
             <button
               onClick={handleLogout}
               className="aquaia-nav-logout"
-              aria-label="Cerrar sesión"
             >
               Salir
             </button>
@@ -74,7 +78,28 @@ export default function Navbar() {
             </NavLink>
           )}
         </nav>
+
+        {/* Mobile Toggle */}
+        <button className="mobile-toggle" onClick={toggleMenu} aria-label="Abrir menú">
+          {isOpen ? '✕' : '☰'}
+        </button>
       </div>
+
+      {/* Mobile Sidebar */}
+      <div className={`mobile-sidebar ${isOpen ? 'open' : ''}`}>
+        <nav className="mobile-sidebar__nav">
+          <NavLink to="/" end className="mobile-nav-link" onClick={closeMenu}>Inicio</NavLink>
+          {user && <NavLink to="/dashboard" className="mobile-nav-link" onClick={closeMenu}>Dashboard</NavLink>}
+          {user && <NavLink to="/add-crop" className="mobile-nav-link" onClick={closeMenu}>Crear Lote</NavLink>}
+          {user ? (
+            <button onClick={() => { handleLogout(); closeMenu(); }} className="mobile-nav-link logout">Cerrar Sesión</button>
+          ) : (
+            <NavLink to="/login" className="mobile-nav-link" onClick={closeMenu}>Ingresar</NavLink>
+          )}
+        </nav>
+      </div>
+
+      {isOpen && <div className="sidebar-overlay" onClick={closeMenu} />}
 
       <style>{`
         .aquaia-navbar {
@@ -100,10 +125,16 @@ export default function Navbar() {
           align-items: center;
           gap: .5rem;
           text-decoration: none;
+          z-index: 102;
         }
         .aquaia-navbar__logo  { font-size: 1.5rem; }
         .aquaia-navbar__title { font-size: 1.25rem; font-weight: 700; color: var(--color-primary-dk); }
-        .aquaia-navbar__nav   { display: flex; align-items: center; gap: 1.25rem; }
+        
+        .desktop-only { display: none; }
+        @media (min-width: 768px) {
+          .desktop-only { display: flex; align-items: center; gap: 1.25rem; }
+          .mobile-toggle { display: none; }
+        }
 
         .aquaia-nav-link {
           font-weight: 500;
@@ -126,6 +157,51 @@ export default function Navbar() {
           transition: color .2s;
         }
         .aquaia-nav-logout:hover { color: #dc2626; }
+
+        .mobile-toggle {
+          background: none;
+          border: none;
+          font-size: 1.75rem;
+          color: var(--color-primary-dk);
+          cursor: pointer;
+          z-index: 102;
+        }
+
+        .mobile-sidebar {
+          position: fixed;
+          top: 0;
+          right: -280px;
+          width: 280px;
+          height: 100dvh;
+          background: white;
+          z-index: 101;
+          transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          padding: 5rem 1.5rem 2rem;
+          box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+        }
+        .mobile-sidebar.open { right: 0; }
+        .mobile-sidebar__nav { display: flex; flex-direction: column; gap: 1rem; }
+        .mobile-nav-link {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--color-text);
+          text-decoration: none;
+          padding: 0.75rem 1rem;
+          border-radius: 0.75rem;
+          transition: background 0.2s;
+        }
+        .mobile-nav-link:active { background: var(--color-bg); }
+        .mobile-nav-link.logout { color: #dc2626; background: none; border: none; text-align: left; cursor: pointer; }
+        
+        .sidebar-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0,0,0,0.3);
+          z-index: 100;
+        }
       `}</style>
     </header>
   );

@@ -16,6 +16,13 @@
 
   /* Spacing scale */
   --nav-height: 64px;
+
+  /* Crop States - High Contrast Rural UI */
+  --color-status-saludable: #16a34a; /* green-600 */
+  --color-status-sediento:  #ca8a04; /* yellow-600 */
+  --color-status-critico:   #dc2626; /* red-600 */
+  --color-status-saturado:   #2563eb; /* blue-600 */
+  --color-status-monitoreo:  #4b5563; /* grey-600 */
 }
 
 /* ─── Base ──────────────────────────────────────────────────── */
