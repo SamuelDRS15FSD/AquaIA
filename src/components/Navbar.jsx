@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth }              from '../hooks/useAuth';
 import { logout }               from '../services/authService';
+import OfflineIndicator       from './OfflineIndicator';
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -29,10 +30,8 @@ export default function Navbar() {
       if (e.matches) setIsOpen(false);
     };
 
-    // Listener moderno para cambios de media query
     mediaQuery.addEventListener('change', handleMediaChange);
     
-    // Verificación inicial por si ya estamos en desktop
     if (mediaQuery.matches) setIsOpen(false);
 
     return () => mediaQuery.removeEventListener('change', handleMediaChange);
@@ -54,11 +53,14 @@ export default function Navbar() {
     <header className="aquaia-navbar">
       <div className="aquaia-navbar__inner">
 
-        {/* Brand */}
-        <NavLink to="/" className="aquaia-navbar__brand" onClick={closeMenu}>
-          <span className="aquaia-navbar__logo">💧</span>
-          <span className="aquaia-navbar__title">AquaIA</span>
-        </NavLink>
+        {/* Brand + Status */}
+        <div className="aquaia-navbar__brand-group" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <NavLink to="/" className="aquaia-navbar__brand" onClick={closeMenu}>
+            <span className="aquaia-navbar__logo">💧</span>
+            <span className="aquaia-navbar__title">AquaIA</span>
+          </NavLink>
+          <OfflineIndicator />
+        </div>
 
         {/* Desktop Navigation */}
         <nav className="aquaia-navbar__nav desktop-only" aria-label="Navegación principal">

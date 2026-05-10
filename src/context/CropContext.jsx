@@ -5,45 +5,66 @@
  * Prepara el terreno para la integración con Firestore en la Fase 3.
  */
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { calculateIrrigation } from '../logic/irrigationEngine';
 import { getHumanizedExplanation } from '../logic/fallbackService';
+import { 
+  getCropsFromLocal, 
+  saveCropsToLocal, 
+  getClimateModeFromLocal, 
+  saveClimateModeToLocal 
+} from '../services/storageService';
 
 const CropContext = createContext();
 
 export function CropProvider({ children }) {
-  // Estado del Fenómeno Climático Global
-  const [climateMode, setClimateMode] = useState('normal'); // 'normal', 'nino', 'nina'
+  // Estado del Fenómeno Climático Global — Cargar desde Local
+  const [climateMode, setClimateMode] = useState(() => getClimateModeFromLocal());
 
-  // Datos iniciales de prueba (Mocks de Fase 2)
-  const [crops, setCrops] = useState([
-    { 
-      id: '1', 
-      name: 'Lote Norte - Café', 
-      status: 'sediento', 
-      moisturePercent: 32, 
-      lastCheck: 'Hoy, 8:00 AM',
-      recommendation: 'Se recomienda aplicar 5 litros por planta.',
-      aiExplanation: 'El sol ha estado muy fuerte. Riega pronto.',
-      type: 'cafe',
-      liters: 5,
-      frequency: 'Cada 3-4 días'
-    },
-    { 
-      id: '2', 
-      name: 'Ladera Sur - Papa', 
-      status: 'saludable', 
-      moisturePercent: 65, 
-      lastCheck: 'Hoy, 10:30 AM',
-      recommendation: 'El cultivo está en óptimas condiciones.',
-      aiExplanation: '¡Buenas noticias! La humedad es perfecta.',
-      type: 'papa',
-      liters: 0,
-      frequency: 'Cada 2 días'
-    },
-  ]);
+  // Estado de los cultivos — Inicializar desde localStorage o Mocks
+  const [crops, setCrops] = useState(() => {
+    const saved = getCropsFromLocal();
+    if (saved && saved.length > 0) return saved;
 
-  // Función para registrar monitoreo (Motor Real Fase 3)
+    // Datos iniciales de prueba (solo si local está vacío)
+    return [
+      { 
+        id: '1', 
+        name: 'Lote Norte - Café', 
+        status: 'sediento', 
+        moisturePercent: 32, 
+        lastCheck: 'Hoy, 8:00 AM',
+        recommendation: 'Se recomienda aplicar 5 litros por planta.',
+        aiExplanation: 'El sol ha estado muy fuerte. Riega pronto.',
+        type: 'cafe',
+        liters: 5,
+        frequency: 'Cada 3-4 días'
+      },
+      { 
+        id: '2', 
+        name: 'Ladera Sur - Papa', 
+        status: 'saludable', 
+        moisturePercent: 65, 
+        lastCheck: 'Hoy, 10:30 AM',
+        recommendation: 'El cultivo está en óptimas condiciones.',
+        aiExplanation: '¡Buenas noticias! La humedad es perfecta.',
+        type: 'papa',
+        liters: 0,
+        frequency: 'Cada 2 días'
+      },
+    ];
+  });
+
+  // Guardar en localStorage automáticamente cuando cambien los datos
+  useEffect(() => {
+    saveCropsToLocal(crops);
+  }, [crops]);
+
+  useEffect(() => {
+    saveClimateModeToLocal(climateMode);
+  }, [climateMode]);
+
+  // Función para registrar monitoreo (Motor Real Fase 3 + Persistencia)
   const updateCropStatus = (cropId, { moisture, weather, rain }) => {
     setCrops(prevCrops => prevCrops.map(crop => {
       if (crop.id !== cropId) return crop;
@@ -64,7 +85,7 @@ export function CropProvider({ children }) {
         cropType: crop.type,
         moisturePercent,
         climateMode,
-        recentRain: rain // 'ninguna', 'poca', 'mucha'
+        recentRain: rain
       });
 
       // Generar explicación humanizada (Offline)
@@ -74,7 +95,7 @@ export function CropProvider({ children }) {
         ...crop,
         moisturePercent: analysis.moisturePercent,
         status: analysis.status,
-        lastCheck: 'Justo ahora',
+        lastCheck: new Date().toLocaleString(), // Timestamp real
         recommendation: analysis.recommendation,
         aiExplanation: humanized,
         liters: analysis.liters,
@@ -90,7 +111,7 @@ export function CropProvider({ children }) {
       id: Date.now().toString(),
       status: 'monitoreo',
       moisturePercent: 50,
-      lastCheck: 'Recién creado',
+      lastCheck: new Date().toLocaleString(), // Timestamp real
       recommendation: 'Realiza el primer monitoreo para recibir consejos.',
       aiExplanation: '¡Bienvenido! Empieza registrando el estado del lote.',
       liters: 0,
