@@ -23,28 +23,31 @@ import Register        from './pages/Register';
 import DashboardPage   from './pages/DashboardPage';
 import AddCropPage     from './pages/AddCropPage';
 import RegisterStatusPage from './pages/RegisterStatusPage';
+import { CropProvider }   from './context/CropContext';
 
 export default function App() {
   return (
-    <Routes>
-      {/* Layout envuelve todas las rutas — Navbar + main */}
-      <Route path="/" element={<Layout />}>
+    <CropProvider>
+      <Routes>
+        {/* Layout envuelve todas las rutas — Navbar + main */}
+        <Route path="/" element={<Layout />}>
 
-        {/* Rutas públicas */}
-        <Route index              element={<Home />} />
-        <Route path="login"       element={<Login />} />
-        <Route path="register"    element={<Register />} />
+          {/* Rutas públicas */}
+          <Route index              element={<Home />} />
+          <Route path="login"       element={<Login />} />
+          <Route path="register"    element={<Register />} />
 
-        {/* Rutas protegidas */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="dashboard"       element={<DashboardPage />} />
-          <Route path="add-crop"        element={<AddCropPage />} />
-          <Route path="register-status" element={<RegisterStatusPage />} />
+          {/* Rutas protegidas */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="dashboard"       element={<DashboardPage />} />
+            <Route path="add-crop"        element={<AddCropPage />} />
+            <Route path="register-status" element={<RegisterStatusPage />} />
+          </Route>
+
+          {/* Fallback — ruta no encontrada */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
-
-        {/* Fallback — ruta no encontrada */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Route>
-    </Routes>
+      </Routes>
+    </CropProvider>
   );
 }

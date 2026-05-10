@@ -6,35 +6,15 @@
  */
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import StatusBadge from './StatusBadge';
+import { Link }     from 'react-router-dom';
+import { useCrops } from '../context/CropContext';
+import StatusBadge  from './StatusBadge';
 import WeatherAlert from './WeatherAlert';
 import RecommendationCard from './RecommendationCard';
 
 export default function Dashboard() {
-  // Datos locales de prueba corregidos: Cada cultivo es 100% independiente
-  const [crops] = useState([
-    { 
-      id: 1, 
-      name: 'Lote Norte - Café', 
-      status: 'sediento', 
-      moisturePercent: 32, 
-      lastCheck: 'Hoy, 8:00 AM',
-      recommendation: 'Se recomienda aplicar 5 litros por planta en las próximas 3 horas.',
-      aiExplanation: 'El sol ha estado muy fuerte y la tierra de este lote de café se secó rápido. Riega pronto para evitar que las hojas se marchiten.'
-    },
-    { 
-      id: 2, 
-      name: 'Ladera Sur - Papa', 
-      status: 'saludable', 
-      moisturePercent: 65, 
-      lastCheck: 'Hoy, 10:30 AM',
-      recommendation: 'El cultivo está en óptimas condiciones. No requiere riego hoy.',
-      aiExplanation: '¡Buenas noticias! La humedad de la tierra es perfecta (65%) para tus plantas de papa. Sigue así y revisa mañana.'
-    },
-  ]);
-
-  const [activeCropId, setActiveCropId] = useState(1);
+  const { crops } = useCrops();
+  const [activeCropId, setActiveCropId] = useState('1');
   const activeCrop = crops.find(c => c.id === activeCropId);
 
   return (
@@ -77,7 +57,11 @@ export default function Dashboard() {
                   <p className="crop-detail-header__subtitle">Última revisión: {activeCrop.lastCheck}</p>
                 </div>
                 <div className="crop-detail-header__actions">
-                  <Link to="/register-status" className="btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+                  <Link 
+                    to={`/register-status?id=${activeCrop.id}`} 
+                    className="btn-primary btn-sm" 
+                    style={{ textDecoration: 'none' }}
+                  >
                     📈 Registrar Monitoreo
                   </Link>
                   <StatusBadge status={activeCrop.status} />

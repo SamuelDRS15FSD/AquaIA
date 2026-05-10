@@ -6,14 +6,31 @@
  */
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useCrops } from '../context/CropContext';
 import VisualInput from '../components/VisualInput';
 
 export default function RegisterStatusPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const cropId = searchParams.get('id');
+  const { updateCropStatus, crops } = useCrops();
+
+  const activeCrop = crops.find(c => c.id === cropId);
+
   const [moisture, setMoisture] = useState('media');
   const [weather, setWeather] = useState('soleado');
   const [rain, setRain] = useState('ninguna');
+
+  const handleSave = () => {
+    if (!cropId) return;
+    updateCropStatus(cropId, { moisture, weather, rain });
+    navigate('/dashboard');
+  };
+
+  if (!activeCrop) {
+    return <div className="page-container">Cultivo no encontrado.</div>;
+  }
 
   const moistureOptions = [
     { value: 'seca',      label: 'Seca / Polvo', icon: '🏜️' },
@@ -73,7 +90,7 @@ export default function RegisterStatusPage() {
         <button
           className="btn-primary"
           style={{ width: '100%', padding: '1.25rem', fontSize: '1.1rem', marginTop: '1rem' }}
-          onClick={() => navigate('/dashboard')}
+          onClick={handleSave}
         >
           ✅ Actualizar y Ver Recomendación
         </button>

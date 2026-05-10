@@ -7,12 +7,21 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCrops } from '../context/CropContext';
 import VisualInput from '../components/VisualInput';
 
 export default function AddCropPage() {
   const navigate = useNavigate();
+  const { addCrop } = useCrops();
+  const [name, setName] = useState('');
   const [cropType, setCropType] = useState('cafe');
   const [climateMode, setClimateMode] = useState('templado');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addCrop({ name, type: cropType, climate: climateMode });
+    navigate('/dashboard');
+  };
 
   const cropOptions = [
     { value: 'cafe',      label: 'Café',    icon: '☕' },
@@ -41,7 +50,7 @@ export default function AddCropPage() {
         </p>
       </div>
 
-      <form className="card" onSubmit={(e) => { e.preventDefault(); navigate('/dashboard'); }}>
+      <form className="card" onSubmit={handleSubmit}>
         <div className="form-group" style={{ marginBottom: '2rem' }}>
           <label className="visual-input__label">Nombre del Lote</label>
           <input 
@@ -49,6 +58,8 @@ export default function AddCropPage() {
             placeholder="Ej: Lote La Esperanza" 
             className="aquaia-input" 
             required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
           />
         </div>
