@@ -53,7 +53,7 @@ export default function Home() {
         
         <div className="hero-actions">
           <Link to="/dashboard" className="btn-primary">
-            🚀 Mis cultivos
+            🌱 Mis cultivos
           </Link>
           <Link to="/register" className="btn-secondary">
             Crear cuenta nueva
