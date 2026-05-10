@@ -9,7 +9,13 @@
  *   priority: 'alta' | 'media' | 'baja'
  */
 
-export default function RecommendationCard({ recommendation, aiExplanation, priority }) {
+export default function RecommendationCard({ 
+  recommendation, 
+  aiExplanation, 
+  priority,
+  liters = 0,
+  frequency = ''
+}) {
   const priorityColors = {
     alta:  '#fee2e2', // red-100
     media: '#fef3c7', // amber-100
@@ -26,12 +32,30 @@ export default function RecommendationCard({ recommendation, aiExplanation, prio
         <h3 className="recommendation-card__title">💡 Recomendación Técnica</h3>
         <p className="recommendation-card__text">{recommendation}</p>
 
+        {/* Métricas de Riego */}
+        <div className="recommendation-card__metrics">
+          <div className="metric-item">
+            <span className="metric-item__icon">🛢️</span>
+            <div>
+              <span className="metric-item__value">{liters} L</span>
+              <span className="metric-item__label">por planta</span>
+            </div>
+          </div>
+          <div className="metric-item">
+            <span className="metric-item__icon">📅</span>
+            <div>
+              <span className="metric-item__value">{frequency}</span>
+              <span className="metric-item__label">Frecuencia</span>
+            </div>
+          </div>
+        </div>
+
         <hr className="recommendation-card__divider" />
 
         <div className="recommendation-card__ai-section">
-          <div className="recommendation-card__ai-badge">IA Asistente</div>
+          <div className="recommendation-card__ai-badge">Asistente Offline</div>
           <p className="recommendation-card__ai-text">
-            "{aiExplanation || 'La IA está analizando los datos para darte una explicación más sencilla...'}"
+            "{aiExplanation || 'Esperando el primer monitoreo...'}"
           </p>
         </div>
       </div>
@@ -65,6 +89,38 @@ export default function RecommendationCard({ recommendation, aiExplanation, prio
           font-size: 1rem;
           color: var(--color-text);
           font-weight: 500;
+          margin-bottom: 1.5rem;
+        }
+        .recommendation-card__metrics {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        .metric-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          background: #f8fafc; /* slate-50 */
+          padding: 0.75rem;
+          border-radius: 0.75rem;
+        }
+        .metric-item__icon {
+          font-size: 1.5rem;
+        }
+        .metric-item__value {
+          display: block;
+          font-weight: 800;
+          font-size: 1.1rem;
+          color: var(--color-text);
+          line-height: 1.1;
+        }
+        .metric-item__label {
+          display: block;
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: var(--color-text-muted);
+          text-transform: uppercase;
         }
         .recommendation-card__divider {
           margin: 1.5rem 0;

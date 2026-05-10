@@ -11,7 +11,7 @@
  * Phase 2: menú hamburguesa móvil
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth }              from '../hooks/useAuth';
 import { logout }               from '../services/authService';
@@ -20,6 +20,23 @@ export default function Navbar() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Sincronización responsive: Cerrar menú si el viewport pasa a desktop
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    
+    const handleMediaChange = (e) => {
+      if (e.matches) setIsOpen(false);
+    };
+
+    // Listener moderno para cambios de media query
+    mediaQuery.addEventListener('change', handleMediaChange);
+    
+    // Verificación inicial por si ya estamos en desktop
+    if (mediaQuery.matches) setIsOpen(false);
+
+    return () => mediaQuery.removeEventListener('change', handleMediaChange);
+  }, []);
 
   async function handleLogout() {
     try {
@@ -86,7 +103,10 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Sidebar */}
-      <div className={`mobile-sidebar ${isOpen ? 'open' : ''}`}>
+      <div 
+        className={`mobile-sidebar ${isOpen ? 'open' : ''}`} 
+        aria-hidden={!isOpen}
+      >
         <nav className="mobile-sidebar__nav">
           <NavLink to="/" end className="mobile-nav-link" onClick={closeMenu}>Inicio</NavLink>
           {user && <NavLink to="/dashboard" className="mobile-nav-link" onClick={closeMenu}>Dashboard</NavLink>}
@@ -105,6 +125,7 @@ export default function Navbar() {
         .aquaia-navbar {
           position: sticky;
           top: 0;
+          width: 100%;
           z-index: 100;
           background: rgba(255,255,255,.92);
           backdrop-filter: blur(8px);
@@ -170,21 +191,28 @@ export default function Navbar() {
         .mobile-sidebar {
           position: fixed;
           top: 0;
-          right: -280px;
+          right: 0;
           width: 280px;
           height: 100dvh;
           background: white;
           z-index: 101;
-          transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: translateX(100%);
+          visibility: hidden;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
           padding: 5rem 1.5rem 2rem;
           box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+          pointer-events: none;
         }
-        .mobile-sidebar.open { right: 0; }
+        .mobile-sidebar.open { 
+          transform: translateX(0); 
+          visibility: visible;
+          pointer-events: auto;
+        }
         .mobile-sidebar__nav { display: flex; flex-direction: column; gap: 1rem; }
         .mobile-nav-link {
           font-size: 1.25rem;
           font-weight: 600;
-          color: var(--color-text);
+          color: var(--text);
           text-decoration: none;
           padding: 0.75rem 1rem;
           border-radius: 0.75rem;
@@ -197,7 +225,7 @@ export default function Navbar() {
           position: fixed;
           top: 0;
           left: 0;
-          width: 100vw;
+          width: 100%;
           height: 100vh;
           background: rgba(0,0,0,0.3);
           z-index: 100;

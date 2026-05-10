@@ -23,22 +23,3 @@ export default function Layout() {
     </div>
   );
 }
-
-// Scoped styles
-const style = document.createElement('style');
-style.textContent = `
-  .aquaia-layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 100dvh;
-  }
-  .aquaia-layout__main {
-    flex: 1;
-    padding-block: 2rem;
-    padding-inline: 1rem;
-    max-width: 1200px;
-    margin-inline: auto;
-    width: 100%;
-  }
-`;
-document.head.appendChild(style);

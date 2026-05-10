@@ -6,10 +6,15 @@
  */
 
 import { createContext, useContext, useState } from 'react';
+import { calculateIrrigation } from '../logic/irrigationEngine';
+import { getHumanizedExplanation } from '../logic/fallbackService';
 
 const CropContext = createContext();
 
 export function CropProvider({ children }) {
+  // Estado del Fenómeno Climático Global
+  const [climateMode, setClimateMode] = useState('normal'); // 'normal', 'nino', 'nina'
+
   // Datos iniciales de prueba (Mocks de Fase 2)
   const [crops, setCrops] = useState([
     { 
@@ -20,7 +25,9 @@ export function CropProvider({ children }) {
       lastCheck: 'Hoy, 8:00 AM',
       recommendation: 'Se recomienda aplicar 5 litros por planta.',
       aiExplanation: 'El sol ha estado muy fuerte. Riega pronto.',
-      type: 'cafe'
+      type: 'cafe',
+      liters: 5,
+      frequency: 'Cada 3-4 días'
     },
     { 
       id: '2', 
@@ -30,41 +37,49 @@ export function CropProvider({ children }) {
       lastCheck: 'Hoy, 10:30 AM',
       recommendation: 'El cultivo está en óptimas condiciones.',
       aiExplanation: '¡Buenas noticias! La humedad es perfecta.',
-      type: 'papa'
+      type: 'papa',
+      liters: 0,
+      frequency: 'Cada 2 días'
     },
   ]);
 
-  // Función para registrar monitoreo (Mock Engine Simple)
+  // Función para registrar monitoreo (Motor Real Fase 3)
   const updateCropStatus = (cropId, { moisture, weather, rain }) => {
     setCrops(prevCrops => prevCrops.map(crop => {
       if (crop.id !== cropId) return crop;
 
-      // Mock Engine: Reglas simples para Fase 2
-      let newMoisture = 50;
-      let newStatus = 'saludable';
-      let newRec = 'Mantener monitoreo regular.';
+      // Mapeo de niveles visuales a porcentaje numérico
+      const moistureMap = {
+        'seca': 15,
+        'baja': 35,
+        'media': 55,
+        'adecuada': 75,
+        'saturada': 95
+      };
 
-      if (moisture === 'seca') {
-        newMoisture = 15;
-        newStatus = 'critico';
-        newRec = 'Riego de emergencia inmediato.';
-      } else if (moisture === 'baja') {
-        newMoisture = 35;
-        newStatus = 'sediento';
-        newRec = 'Se recomienda riego moderado.';
-      } else if (moisture === 'saturada' || rain === 'mucha') {
-        newMoisture = 90;
-        newStatus = 'saturado';
-        newRec = 'Suspender riego por 48 horas.';
-      }
+      const moisturePercent = moistureMap[moisture] || 50;
+
+      // Ejecutar el motor de riego
+      const analysis = calculateIrrigation({
+        cropType: crop.type,
+        moisturePercent,
+        climateMode,
+        recentRain: rain // 'ninguna', 'poca', 'mucha'
+      });
+
+      // Generar explicación humanizada (Offline)
+      const humanized = getHumanizedExplanation(analysis);
 
       return {
         ...crop,
-        moisturePercent: newMoisture,
-        status: newStatus,
+        moisturePercent: analysis.moisturePercent,
+        status: analysis.status,
         lastCheck: 'Justo ahora',
-        recommendation: newRec,
-        aiExplanation: 'Estado actualizado según tu reporte visual reciente.'
+        recommendation: analysis.recommendation,
+        aiExplanation: humanized,
+        liters: analysis.liters,
+        frequency: analysis.frequency,
+        priority: analysis.priority
       };
     }));
   };
@@ -78,13 +93,21 @@ export function CropProvider({ children }) {
       lastCheck: 'Recién creado',
       recommendation: 'Realiza el primer monitoreo para recibir consejos.',
       aiExplanation: '¡Bienvenido! Empieza registrando el estado del lote.',
+      liters: 0,
+      frequency: 'Pendiente',
       ...newCrop
     };
     setCrops(prev => [...prev, cropToAdd]);
   };
 
   return (
-    <CropContext.Provider value={{ crops, updateCropStatus, addCrop }}>
+    <CropContext.Provider value={{ 
+      crops, 
+      updateCropStatus, 
+      addCrop, 
+      climateMode, 
+      setClimateMode 
+    }}>
       {children}
     </CropContext.Provider>
   );
